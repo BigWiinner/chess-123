@@ -61,6 +61,66 @@ void Chess::FENtoBoard(const std::string& fen) {
     // 3: castling availability (KQkq or -)
     // 4: en passant target square (in algebraic notation, or -)
     // 5: halfmove clock (number of halfmoves since the last capture or pawn advance)
+
+    _grid->forEachSquare([] (ChessSquare* square, int x, int y) {
+        square->setBit(nullptr);
+    });
+
+    // Go through row first, then column
+    // REMINDERS:
+    //  - lowercase is black
+    //  - uppercase is white
+    //  - numbers are number of empty spaces between pieces
+    //  - / chars denote moving to the next row
+    //  - FEN strings are made with the assumption that white started at the bottom of the board
+
+    // ALSO for column jumping:
+    //  https://www.reddit.com/r/Cplusplus/comments/x89lj8/understanding_the_code_hack_of_adding_0_to_char/
+
+    int row = 7;
+    int col = 0;
+    for (char c : fen) {
+        
+        // For now, change later:
+        if (c == ' ') {
+            return;
+        }
+
+
+        if (c == '/') {
+            row--;
+            col = 0;
+        }
+        else if (isdigit(c)) {
+            col += c - '0';
+        }
+        else {
+            ChessPiece piece = Pawn;
+            char upperC = toupper(c);
+            if (upperC == 'R') {
+                piece = Rook;
+            }
+            else if (upperC == 'N') {
+                piece = Knight;
+            }
+            else if (upperC == 'B') {
+                piece = Bishop;
+            }
+            else if (upperC == 'Q') {
+                piece = Queen;
+            }
+            else if (upperC == 'K') {
+                piece = King;
+            }
+
+            Bit* bit = PieceForPlayer(isupper(c) ? 0 : 1, piece);
+            ChessSquare* square = _grid->getSquare(col, row);
+            bit->setPosition(square->getPosition());
+            square->setBit(bit);
+            bit->setGameTag(isupper(c) ? piece : (piece + 128));
+            col++;
+        }
+    }
 }
 
 bool Chess::actionForEmptyHolder(BitHolder &holder)
