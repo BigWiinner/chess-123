@@ -47,8 +47,9 @@ void Chess::setUpBoard()
     _currentPlayer = WHITE;
 
     _grid->initializeChessSquares(pieceSize, "boardsquare.png");
+    
     FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-
+    
     _moves = generateAllMoves();
     startGame();
 }
@@ -251,6 +252,28 @@ void Chess::generateKnightMoves(std::vector<BitMove>& moves, std::string& state)
     }
 }
 
+void Chess::generateKingMoves(std::vector<BitMove>& moves, std::string& state) {
+    char kingPiece = _currentPlayer == WHITE ? 'K' : 'k';
+
+    std::pair<int,int> kingMoves[] = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 } };
+
+    int index = 0;
+    for (char square : state) {
+        if (square == kingPiece) {
+            int rank = index / 8;
+            int file = index % 8;
+
+            for(auto [dr, df] : kingMoves) {
+                int r = rank + dr, f = file + df;
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 ) {
+                    moves.emplace_back(index, r*8+f, King);
+                }
+            }
+        }
+        index++;
+    }
+}
+
 std::vector<BitMove> Chess::generateAllMoves() {
     std::vector<BitMove> moves;
     moves.reserve(32);
@@ -259,6 +282,7 @@ std::vector<BitMove> Chess::generateAllMoves() {
     std::cout << state << std::endl;
 
     generateKnightMoves(moves, state);
+    generateKingMoves(moves, state);
 
     return moves;
 }

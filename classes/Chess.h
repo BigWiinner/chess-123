@@ -38,6 +38,7 @@ private:
     void FENtoBoard(const std::string& fen);
     char pieceNotation(int x, int y) const;
     void generateKnightMoves(std::vector<BitMove>& moves,std::string& state);
+    void generateKingMoves(std::vector<BitMove>& moves,std::string& state);
 
     std::vector<BitMove> generateAllMoves();
 
