@@ -35,10 +35,12 @@ public:
 private:
     Bit* PieceForPlayer(const int playerNumber, ChessPiece piece);
     Player* ownerAt(int x, int y) const;
+    int ownerColorAt(int x, int y) const;
     void FENtoBoard(const std::string& fen);
     char pieceNotation(int x, int y) const;
     void generateKnightMoves(std::vector<BitMove>& moves,std::string& state);
     void generateKingMoves(std::vector<BitMove>& moves,std::string& state);
+    void generatePawnMoves(std::vector<BitMove>& moves, std::string& state);
 
     std::vector<BitMove> generateAllMoves();
 

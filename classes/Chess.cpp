@@ -192,6 +192,23 @@ Player* Chess::ownerAt(int x, int y) const
     return square->bit()->getOwner();
 }
 
+int Chess::ownerColorAt(int x, int y) const {
+    if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+        return 0;
+    }
+
+    auto square = _grid->getSquare(x, y);
+    if (!square || !square->bit()) {
+        return 0;
+    }
+    int owner = square->bit()->getOwner()->playerNumber();
+
+    if (owner == 1) {
+        return BLACK;
+    }
+    return WHITE;
+}
+
 Player* Chess::checkForWinner()
 {
     return nullptr;
@@ -243,7 +260,8 @@ void Chess::generateKnightMoves(std::vector<BitMove>& moves, std::string& state)
 
             for(auto [dr, df] : knightMoves) {
                 int r = rank + dr, f = file + df;
-                if (r >= 0 && r < 8 && f >= 0 && f < 8 ) {
+                int squareColor = ownerColorAt(f, r);
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
                     moves.emplace_back(index, r*8+f, Knight);
                 }
             }
@@ -265,7 +283,8 @@ void Chess::generateKingMoves(std::vector<BitMove>& moves, std::string& state) {
 
             for(auto [dr, df] : kingMoves) {
                 int r = rank + dr, f = file + df;
-                if (r >= 0 && r < 8 && f >= 0 && f < 8 ) {
+                int squareColor = ownerColorAt(f, r);
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
                     moves.emplace_back(index, r*8+f, King);
                 }
             }
@@ -274,15 +293,54 @@ void Chess::generateKingMoves(std::vector<BitMove>& moves, std::string& state) {
     }
 }
 
+void Chess::generatePawnMoves(std::vector<BitMove>& moves, std::string& state) {
+    char pawnPiece = _currentPlayer == WHITE ? 'P' : 'p';
+    int startRank = _currentPlayer == WHITE ? 1 : 6;
+    int captureMoves[2] = { 1, -1 };
+
+    int index = 0;
+    for (char square : state) {
+        if (square == pawnPiece) {
+            int rank = index / 8;
+            int file = index % 8;
+
+            int r = _currentPlayer == WHITE ? rank + 1 : rank - 1;
+
+            if (r >= 0 && r < 8 && ownerAt(file, r) == nullptr) {
+                moves.emplace_back(index, r*8+file, Pawn);
+            }
+            
+            // Check to see if pawn can take a piece
+            for (int move : captureMoves) {
+                int f = file + move;
+                int squareColor =  ownerColorAt(f, r);
+                if (f >= 0 && f < 8 && squareColor != 0 && squareColor != _currentPlayer) {
+                    moves.emplace_back(index, r*8+f, Pawn);
+                }                
+            }
+
+            // Lets pawns move two forward on their first move
+            if (startRank == rank && ownerAt(file, r) == nullptr) {
+                r += _currentPlayer == WHITE ? 1 : -1;
+                moves.emplace_back(index, r*8+file, Pawn);
+            }
+
+
+        }
+        index++;
+    }
+}
+
+
 std::vector<BitMove> Chess::generateAllMoves() {
     std::vector<BitMove> moves;
     moves.reserve(32);
 
     std::string state = stateString();
-    std::cout << state << std::endl;
 
     generateKnightMoves(moves, state);
     generateKingMoves(moves, state);
+    generatePawnMoves(moves, state);
 
     return moves;
 }
