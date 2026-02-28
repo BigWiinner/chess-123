@@ -1,13 +1,7 @@
-Fork or clone your this chess project into a new GitHub repository.
+Fork or of gdevine_ucsc's chess repo for CMPM 123 - Advanced Programming
 
-Add support for FEN stringsLinks to an external site. to your game setup so that instead of the current way you are setting up your game board you are setting it up with a call similar to the following call.
+Most recent implementation has basic FEN string implementation as well as movement for knights, kings, and pawns.
+Current implementation for movement of knights, kings, and pawns follows a naive approach of iterating through the state string
+  in order to find pieces and their valid moves. Once I understand better how bit boards work I'll be refactoring the code to use that instead.
 
-FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-
-Your routine should be able to take just the board position portion of a FEN string, or the entire FEN string like so:
-
-FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-
-(you can ignore the end for now)
-
-This will allow you to quickly check that your castling, promotion and en passant code is working.
+En Passant, Castling, and Pawn Promotion are not present yet
