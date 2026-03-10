@@ -48,8 +48,8 @@ void Chess::setUpBoard()
 
     _grid->initializeChessSquares(pieceSize, "boardsquare.png");
     
-    //FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
-    FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/8/7R");
+    FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+    //FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/8/4B3");
     _moves = generateAllMoves();
     startGame();
 }
@@ -386,6 +386,54 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
 
 void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state) {
     char bishopPiece = _currentPlayer == WHITE ? 'B' : 'b';
+    int index = 0;
+    for (char square : state) {
+        if (square == bishopPiece) {
+            int rank = index / 8;
+            int file = index % 8;
+
+            for (int i = 1; i < 8; i++) {
+                int r = rank + i, f = file + i;
+                int squareColor = ownerColorAt(f, r);
+                if (squareColor == _currentPlayer) { break; }
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
+                    moves.emplace_back(index, r*8+f, Bishop);
+                }
+                if (squareColor != 0) { break; }
+            }
+
+            for (int i = 1; i < 8; i++) {
+                int r = rank + i, f = file - i;
+                int squareColor = ownerColorAt(f, r);
+                if (squareColor == _currentPlayer) { break; }
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
+                    moves.emplace_back(index, r*8+f, Bishop);
+                }
+                if (squareColor != 0) { break; }
+            }
+
+            for (int i = 1; i < 8; i++) {
+                int r = rank - i, f = file + i;
+                int squareColor = ownerColorAt(f, r);
+                if (squareColor == _currentPlayer) { break; }
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
+                    moves.emplace_back(index, r*8+f, Bishop);
+                }
+                if (squareColor != 0) { break; }
+            }
+
+            for (int i = 1; i < 8; i++) {
+                int r = rank - i, f = file - i;
+                int squareColor = ownerColorAt(f, r);
+                if (squareColor == _currentPlayer) { break; }
+                if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
+                    moves.emplace_back(index, r*8+f, Bishop);
+                }
+                if (squareColor != 0) { break; }
+            }
+        }
+        index++;
+    }
 }
 
 void Chess::generateQueenMoves(std::vector<BitMove>& moves, std::string& state) {
@@ -402,6 +450,7 @@ std::vector<BitMove> Chess::generateAllMoves() {
     generateKingMoves(moves, state);
     generatePawnMoves(moves, state);
     generateRookMoves(moves, state);
+    generateBishopMoves(moves, state);
 
     return moves;
 }
