@@ -41,7 +41,9 @@ private:
     void generateKnightMoves(std::vector<BitMove>& moves,std::string& state);
     void generateKingMoves(std::vector<BitMove>& moves,std::string& state);
     void generatePawnMoves(std::vector<BitMove>& moves, std::string& state);
+    void getHorizontalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece);
     void generateRookMoves(std::vector<BitMove>& moves, std::string& state);
+    void getDiagonalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece);
     void generateBishopMoves(std::vector<BitMove>& moves, std::string& state);
     void generateQueenMoves(std::vector<BitMove>& moves, std::string& state);
 

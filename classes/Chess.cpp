@@ -331,11 +331,10 @@ void Chess::generatePawnMoves(std::vector<BitMove>& moves, std::string& state) {
     }
 }
 
-void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
-    char rookPiece = _currentPlayer == WHITE ? 'R' : 'r';
+void Chess::getHorizontalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece) {
     int index = 0;
     for (char square : state) {
-        if (square == rookPiece) {
+        if (square == pieceChar) {
             int rank = index / 8;
             int file = index % 8;
 
@@ -344,7 +343,7 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
                 int squareColor =  ownerColorAt(file, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+file, Rook);
+                    moves.emplace_back(index, r*8+file, piece);
                 }
                 if (squareColor != 0) break;
             }
@@ -354,7 +353,7 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
                 int squareColor =  ownerColorAt(file, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+file, Rook);
+                    moves.emplace_back(index, r*8+file, piece);
                 }
                 if (squareColor != 0) break;
             }
@@ -364,7 +363,7 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
                 int squareColor =  ownerColorAt(f, rank);
                 if (squareColor == _currentPlayer) { break; }
                 if (f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, rank*8+f, Rook);
+                    moves.emplace_back(index, rank*8+f, piece);
                 }
                 if (squareColor != 0) break;
             }
@@ -374,7 +373,7 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
                 int squareColor =  ownerColorAt(f, rank);
                 if (squareColor == _currentPlayer) { break; }
                 if (f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, rank*8+f, Rook);
+                    moves.emplace_back(index, rank*8+f, piece);
                 }
                 if (squareColor != 0) break;
             }
@@ -384,11 +383,16 @@ void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
     }
 }
 
-void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state) {
-    char bishopPiece = _currentPlayer == WHITE ? 'B' : 'b';
+void Chess::generateRookMoves(std::vector<BitMove>& moves, std::string& state) {
+    char rookPiece = _currentPlayer == WHITE ? 'R' : 'r';
+    getHorizontalMoves(moves, state, rookPiece, Rook);
+    
+}
+
+void Chess::getDiagonalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece) {
     int index = 0;
     for (char square : state) {
-        if (square == bishopPiece) {
+        if (square == pieceChar) {
             int rank = index / 8;
             int file = index % 8;
 
@@ -397,7 +401,7 @@ void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state)
                 int squareColor = ownerColorAt(f, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+f, Bishop);
+                    moves.emplace_back(index, r*8+f, piece);
                 }
                 if (squareColor != 0) { break; }
             }
@@ -407,7 +411,7 @@ void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state)
                 int squareColor = ownerColorAt(f, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+f, Bishop);
+                    moves.emplace_back(index, r*8+f, piece);
                 }
                 if (squareColor != 0) { break; }
             }
@@ -417,7 +421,7 @@ void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state)
                 int squareColor = ownerColorAt(f, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+f, Bishop);
+                    moves.emplace_back(index, r*8+f, piece);
                 }
                 if (squareColor != 0) { break; }
             }
@@ -427,7 +431,7 @@ void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state)
                 int squareColor = ownerColorAt(f, r);
                 if (squareColor == _currentPlayer) { break; }
                 if (r >= 0 && r < 8 && f >= 0 && f < 8 && squareColor != _currentPlayer) {
-                    moves.emplace_back(index, r*8+f, Bishop);
+                    moves.emplace_back(index, r*8+f, piece);
                 }
                 if (squareColor != 0) { break; }
             }
@@ -436,7 +440,15 @@ void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state)
     }
 }
 
+void Chess::generateBishopMoves(std::vector<BitMove>& moves, std::string& state) {
+    char bishopPiece = _currentPlayer == WHITE ? 'B' : 'b';
+    getDiagonalMoves(moves, state, bishopPiece, Bishop);
+}
+
 void Chess::generateQueenMoves(std::vector<BitMove>& moves, std::string& state) {
+    char queenPiece = _currentPlayer == WHITE ? 'Q' : 'q';
+    getHorizontalMoves(moves, state, queenPiece, Queen);
+    getDiagonalMoves(moves, state, queenPiece, Queen);
 }
 
 
@@ -451,6 +463,7 @@ std::vector<BitMove> Chess::generateAllMoves() {
     generatePawnMoves(moves, state);
     generateRookMoves(moves, state);
     generateBishopMoves(moves, state);
+    generateQueenMoves(moves, state);
 
     return moves;
 }
