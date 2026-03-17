@@ -8,6 +8,27 @@ constexpr int pieceSize = 80;
 constexpr int WHITE = +1;
 constexpr int BLACK = -1;
 
+enum PieceBoard
+{
+    WHITE_PAWNS,
+    WHITE_ROOKS,
+    WHITE_BISHOPS,
+    WHITE_KNIGHTS,
+    WHITE_QUEENS,
+    WHITE_KING,
+    WHITE_ALL,
+    BLACK_PAWNS,
+    BLACK_ROOKS,
+    BLACK_BISHOPS,
+    BLACK_KNIGHTS,
+    BLACK_QUEENS,
+    BLACK_KING,
+    BLACK_ALL,
+    OCCUPIED,
+    EMPTY,
+    e_numBitboards
+};
+
 class Chess : public Game
 {
 public:
@@ -38,18 +59,24 @@ private:
     int ownerColorAt(int x, int y) const;
     void FENtoBoard(const std::string& fen);
     char pieceNotation(int x, int y) const;
-    void generateKnightMoves(std::vector<BitMove>& moves,std::string& state);
-    void generateKingMoves(std::vector<BitMove>& moves,std::string& state);
-    void generatePawnMoves(std::vector<BitMove>& moves, std::string& state);
-    void getHorizontalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece);
-    void generateRookMoves(std::vector<BitMove>& moves, std::string& state);
-    void getDiagonalMoves(std::vector<BitMove>& moves, std::string& state, char pieceChar, ChessPiece piece);
-    void generateBishopMoves(std::vector<BitMove>& moves, std::string& state);
-    void generateQueenMoves(std::vector<BitMove>& moves, std::string& state);
+
+    BitboardElement generateKnightBitboardMoves(int square);
+    void generateKnightMoves(std::vector<BitMove>& moves, BitboardElement knights, BitboardElement unoccupied);
+    void generateBishopMoves(std::vector<BitMove>& moves, BitboardElement bishops, BitboardElement unoccupied, BitboardElement friendlies);
+    void generateRookMoves(std::vector<BitMove>& moves, BitboardElement bishops, BitboardElement unoccupied, BitboardElement friendlies);
+    void generateQueenMoves(std::vector<BitMove>& moves, BitboardElement bishops, BitboardElement unoccupied, BitboardElement friendlies);
+    BitboardElement generateKingBitboardMoves(int square);
+    void generateKingMoves(std::vector<BitMove>& moves, BitboardElement king, BitboardElement unoccupied);
+    void generatePawnMoves(std::vector<BitMove>& moves, BitboardElement pawns, BitboardElement emptySpaces, BitboardElement enemySpaces, char color);
+    void addPawnMovesToList(std::vector<BitMove>& moves, BitboardElement bitboard, int shift);
 
     std::vector<BitMove> generateAllMoves();
 
     Grid* _grid;
     std::vector<BitMove> _moves;
     int _currentPlayer;
+    BitboardElement _bitboards[e_numBitboards];
+    int _bitboardLookup[128];
+    BitboardElement _knightBitboards[64];
+    BitboardElement _kingBitboards[64];
 };

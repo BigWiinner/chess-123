@@ -22,6 +22,7 @@ Icon?
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
+CMakePresets.json
 Makefile
 *.vcxproj
 *.vcxproj.filters

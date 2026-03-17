@@ -71,7 +71,7 @@ private:
     inline int bitScanForward(uint64_t bb) const {
 #if defined(_MSC_VER) && !defined(__clang__)
         unsigned long index;
-        _BitScanForward(&index, bb);
+        _BitScanForward64(&index, bb);
         return index;
 #else
         return __builtin_ffsll(bb) - 1;
