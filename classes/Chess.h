@@ -53,6 +53,10 @@ public:
 
     Grid* getGrid() override { return _grid; }
 
+    // AI methods
+    void updateAI() override;
+    bool gameHasAI() override { return true; }
+
 private:
     Bit* PieceForPlayer(const int playerNumber, ChessPiece piece);
     Player* ownerAt(int x, int y) const;
@@ -71,6 +75,10 @@ private:
     void addPawnMovesToList(std::vector<BitMove>& moves, BitboardElement bitboard, int shift);
 
     std::vector<BitMove> generateAllMoves();
+    std::vector<BitMove> generateAllMoves(char* state, int player);
+
+    int evaluate(std::string state);
+    int negamax(char* state, int depth, int alpha, int beta, int player);
 
     Grid* _grid;
     std::vector<BitMove> _moves;
